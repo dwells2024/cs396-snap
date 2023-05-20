@@ -32,7 +32,7 @@ def get_depts(airport):
 def get_pass(airport):
     return airport["pass"]
 
-pass500 = [airport["name"] for airport in sorted(list(airports.values()), key=get_pass, reverse=True)[:100]]
+pass500 = [airport["name"] for airport in sorted(list(airports.values()), key=get_pass, reverse=True)[:500]]
 # print(pass500)
 
 airport_to_node = {}
@@ -62,8 +62,8 @@ for row in data:
             network_dict[(origin, dest)] = {
                 "origin": airport_to_node[origin],
                 "destination": airport_to_node[dest],
-                # "origin": origin,
-                # "destination": dest,
+                "o_code": origin,
+                "d_code": dest,
                 "totalPassengers": float(passengers)
             }
         else:
@@ -77,6 +77,15 @@ with open("passengersEdgelist.csv", 'w', newline='', encoding='utf-8') as file:
     for route in network_dict.values():
         if route["totalPassengers"] != 0:
             writer.writerow([route["origin"], route["destination"], int(route["totalPassengers"])])
+
+with open("airportNetwork.csv", 'w', newline='', encoding='utf-8') as file:
+    writer = csv.writer(file)
+
+    writer.writerow(["origin", "destination"])
+
+    for route in network_dict.values():
+        if route["totalPassengers"] != 0 and route["origin"] != route["destination"]:
+            writer.writerow([route["o_code"], route["d_code"]])
 
 
 
