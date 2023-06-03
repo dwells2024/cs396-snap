@@ -1,6 +1,9 @@
 import csv
 import json
 
+export_dir = "../50/"
+num = 50
+
 with open("../data/T_T100D_SEGMENT_ALL_CARRIER.csv") as csvfile:
     reader = csv.reader(csvfile)
 
@@ -33,7 +36,7 @@ def get_depts(airport):
 def get_pass(airport):
     return airport["pass"]
 
-pass500 = [airport["name"] for airport in sorted(list(airports.values()), key=get_pass, reverse=True)[:500]]
+pass500 = [airport["name"] for airport in sorted(list(airports.values()), key=get_pass, reverse=True)[:num]]
 # print(pass500)
 
 airport_to_node = {}
@@ -41,13 +44,13 @@ airport_to_node = {}
 for i in range(1, len(pass500) + 1):
     airport_to_node[pass500[i-1]] = i
 
-# with open("nodeAirportName.csv", 'w', newline='', encoding='utf-8') as file:
-#     writer = csv.writer(file,)
+with open(export_dir+"nodeAirportName.csv", 'w', newline='', encoding='utf-8') as file:
+    writer = csv.writer(file,)
 
-#     writer.writerow(["nodeID", "airportCode"])
+    writer.writerow(["nodeID", "airportCode"])
 
-#     for airport in airport_to_node:
-#         writer.writerow([airport_to_node[airport], airport])
+    for airport in airport_to_node:
+        writer.writerow([airport_to_node[airport], airport])
 
 # [['DEPARTURES_SCHEDULED', 'DEPARTURES_PERFORMED', 'SEATS', 'PASSENGERS', 'DISTANCE', 'ORIGIN_AIRPORT_ID', 'ORIGIN', 'DEST_AIRPORT_ID', 'DEST', 'MONTH']
 
@@ -103,32 +106,90 @@ for row in data:
 
 
 
-# with open("passengersEdgelist.csv", 'w', newline='', encoding='utf-8') as file:
-#     writer = csv.writer(file)
+with open(export_dir + "passengersEdgelist.csv", 'w', newline='', encoding='utf-8') as file:
+    writer = csv.writer(file)
 
-#     writer.writerow(["origin", "destination", "passengers"])
+    writer.writerow(["origin", "destination", "passengers"])
 
-#     for route in network_dict.values():
-#         if route["totalPassengers"] != 0:
-#             writer.writerow([route["origin"], route["destination"], int(route["totalPassengers"])])
+    for route in network_dict.values():
+        if route["totalPassengers"] != 0 and route["origin"] != route["destination"]:
+            writer.writerow([route["origin"], route["destination"], int(route["totalPassengers"])])
 
-# with open("airportNetwork.csv", 'w', newline='', encoding='utf-8') as file:
-#     writer = csv.writer(file)
+with open(export_dir + "airportNetwork.csv", 'w', newline='', encoding='utf-8') as file:
+    writer = csv.writer(file)
 
-#     writer.writerow(["origin", "destination"])
+    writer.writerow(["origin", "destination"])
 
-#     for route in network_dict.values():
-#         if route["totalPassengers"] != 0 and route["origin"] != route["destination"]:
-#             writer.writerow([route["o_code"], route["d_code"]])
+    for route in network_dict.values():
+        if route["totalPassengers"] != 0 and route["origin"] != route["destination"]:
+            writer.writerow([route["o_code"], route["d_code"]])
 
-# with open("airportNetworkNumeric.csv", 'w', newline='', encoding='utf-8') as file:
-#     writer = csv.writer(file)
+with open(export_dir+"airportNetworkNumeric.csv", 'w', newline='', encoding='utf-8') as file:
+    writer = csv.writer(file)
 
-#     writer.writerow(["origin", "destination"])
+    writer.writerow(["origin", "destination"])
 
-#     for route in network_dict.values():
-#         if route["totalPassengers"] != 0 and route["origin"] != route["destination"]:
-#             writer.writerow([route["origin"], route["destination"]])
+    for route in network_dict.values():
+        if route["totalPassengers"] != 0 and route["origin"] != route["destination"]:
+            writer.writerow([route["origin"], route["destination"]])
+
+with open("../500/enplanements.csv") as file:
+    reader = csv.reader(file)
+
+    data = []
+
+    for row in reader:
+        data.append(row)
+
+    with open(export_dir+"enplanements.csv", 'w', newline='', encoding='utf-8') as new_file:
+        writer = csv.writer(new_file)
+
+        print(data[0])
+        writer.writerow(data[0])
+
+        for row in data[1:num+1]:
+            writer.writerow(row)
+
+# with open("../500/passengersEdgelist.csv") as file:
+#     reader = csv.reader(file)
+
+#     data = []
+
+#     for row in reader:
+#         data.append(row)
+
+#     with open(export_dir+"passengersEdgelist.csv", 'w', newline='', encoding='utf-8') as new_file:
+#         writer = csv.writer(new_file)
+
+#         print(data[0])
+#         writer.writerow(data[0])
+
+#         for row in data[1:101]:
+#             writer.writerow(row)
+
+with open("../500/airportPopulation.csv") as file:
+    reader = csv.reader(file)
+
+    data = []
+
+    for row in reader:
+        data.append(row)
+
+    with open(export_dir+"airportPopulation.csv", 'w', newline='', encoding='utf-8') as new_file:
+        writer = csv.writer(new_file)
+
+        print(data[0])
+        writer.writerow(data[0])
+
+        for row in data[1:num+1]:
+            writer.writerow(row)
+
+
+
+
+
+
+
 
 
 
@@ -361,7 +422,31 @@ for row in data:
 #     for airport in airport_to_node:
 #         writer.writerow([airport_census[airport]["pop"]])
 
-with open("airportPopulation.csv") as file:
+# with open("airportPopulation.csv") as file:
+#     reader = csv.reader(file)
+
+#     populations = []
+
+#     for row in reader:
+#         populations.append(row[0])
+
+#     populations = [int(num) for num in populations[1:]]
+
+#     mean = sum(populations)/len(populations)
+#     print(mean)
+
+#     with open("populationBool.csv", 'w', newline='', encoding='utf-8') as new_file:
+#         writer = csv.writer(new_file)
+
+#         writer.writerow(["Population>Mean("+str(mean)+")"])
+
+#         for num in populations:
+#             if num > mean:
+#                 writer.writerow(["1"])
+#             else:
+#                 writer.writerow(["0"])
+
+with open("../50/airportPopulation.csv") as file:
     reader = csv.reader(file)
 
     populations = []
@@ -374,7 +459,31 @@ with open("airportPopulation.csv") as file:
     mean = sum(populations)/len(populations)
     print(mean)
 
-    with open("populationBool.csv", 'w', newline='', encoding='utf-8') as new_file:
+    with open("../50/populationBool.csv", 'w', newline='', encoding='utf-8') as new_file:
+        writer = csv.writer(new_file)
+
+        writer.writerow(["Population>Mean("+str(mean)+")"])
+
+        for num in populations:
+            if num > mean:
+                writer.writerow(["1"])
+            else:
+                writer.writerow(["0"])
+
+with open("../100/airportPopulation.csv") as file:
+    reader = csv.reader(file)
+
+    populations = []
+
+    for row in reader:
+        populations.append(row[0])
+
+    populations = [int(num) for num in populations[1:]]
+
+    mean = sum(populations)/len(populations)
+    print(mean)
+
+    with open("../100/populationBool.csv", 'w', newline='', encoding='utf-8') as new_file:
         writer = csv.writer(new_file)
 
         writer.writerow(["Population>Mean("+str(mean)+")"])
